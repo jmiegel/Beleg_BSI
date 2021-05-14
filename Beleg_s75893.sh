@@ -72,32 +72,8 @@ echo "ausgepackt *******"
 
 choose_files $1
 
-#MY_TEMPFILE=$(mktemp)
+#cat NEEDED.txt
 
-#case "$1" in
-#  all)      choose_files
-#            ;;
-#  fohls)    cat auth-fohls* >> NEEDED.txt
-#            ;;
-#  ilpro122) cat auth-ilpro122* >> NEEDED.txt
-#            ;;
-#  ipc88)    cat auth-ipc88* >> NEEDED.txt
-#            ;;
-#  ipo51)    cat auth-ipo51* >> NEEDED.txt
-#esac
-
-cat NEEDED.txt
-
-ls
-
-
-
-
-
-
-
-
-
-
+#ls
 
 exit 0
