@@ -55,25 +55,41 @@ trap 'rm -fdr "$MY_TEMPDIR"' EXIT
 #***************
 # get data recursive, save into TEMPDIR and decompress .gz
 #***************
-wget -nd -P $MY_TEMPDIR -r -A "*.log*" http://ilpro122.informatik.htw-dresden.de/logs/#http://ilpro122.infor.htw-dresden.de/logs/
+wget -nd -P $MY_TEMPDIR -r -A "*.log*" http://ilpro122.informatik.htw-dresden.de/logs/
 
-echo "runtergeladen ****"
-ls $MY_TEMPDIR
 cd $MY_TEMPDIR
 gzip -d *.gz
-#cd ..
-echo "ausgepackt *******"
-#ls $MY_TEMPDIR
 
 #***************
 # data analysis
 #***************
+echo "Daten werden ausgewertet..."
 # create temporary file
-
 choose_files $1
 
-#cat NEEDED.txt
+# evaluate data
+case "$2" in
+  root)   grep -P "Failed password for root from" NEEDED.txt |
+          grep -oP "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" |
+          sort | uniq -c |
+          awk 'BEGIN { printf "%s %s\n", "IP-Adress", "Frequency"
+                                        printf "%s %s\n", "--------", "---------" }
+                                      { printf "%s %s\n", $2, $1 }' | column -t
+          ;;
+  users)  grep -P "Failed password for invalid user" NEEDED.txt |
+          grep -oP "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" |
+          sort | uniq -c |
+          awk 'BEGIN { printf "%s %s\n", "IP-Adress", "Frequency"
+                                        printf "%s %s\n", "--------", "---------" }
+                                      { printf "%s %s\n", $2, $1 }' | column -t
+          ;;
+  login)  grep -oP "(?<=Failed password for invalid user )[A-Za-z0-9]{1,}" NEEDED.txt |
+          sort | uniq -c | sort -n |
+          awk 'BEGIN { printf "%s %s\n", "Username", "Frequency"
+                                                  printf "%s %s\n", "--------", "---------" }
+                                                { printf "%s %s\n", $2, $1 }' | column -t
+          ;;
+esac
 
-#ls
-
+cd ..
 exit 0
