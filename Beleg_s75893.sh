@@ -11,6 +11,7 @@
 set -e
 set -u
 set -o pipefail
+exec 2>> /dev/null
 
 #****************
 # function to choose needed files and to write them into one file
@@ -49,21 +50,33 @@ fi
 #***************
 # create temporary directory
 #**************
-MY_TEMPDIR=$(mktemp -d)
+if ! MY_TEMPDIR=$(mktemp -d) ; then
+  echo "Unable to create temporary directory"
+  exit 2
+fi
 trap 'rm -fdr "$MY_TEMPDIR"' EXIT
 
 #***************
 # get data recursive, save into TEMPDIR and decompress .gz
 #***************
-wget -nd -P $MY_TEMPDIR -r -A "*.log*" http://ilpro122.informatik.htw-dresden.de/logs/
+echo "Downloading files from ilpro122.informatik.htw-dresden.de/logs/ "
+
+if ! wget -nd -P $MY_TEMPDIR -r -A "*.log*" http://ilpro122.informatik.htw-dresden.de/logs/ ; then
+  echo "Unable to download logfiles"
+  exit 3
+fi
 
 cd $MY_TEMPDIR
-gzip -d *.gz
-
+echo "Unziping files"
+if ! gzip -d *.gz ; then
+  echo "Unable to unzip logfiles"
+  exit 4
+fi
 #***************
 # data analysis
 #***************
-echo "Daten werden ausgewertet..."
+echo -e "Analyzing data\n\n"
+
 # create temporary file
 choose_files $1
 
@@ -92,4 +105,5 @@ case "$2" in
 esac
 
 cd ..
+rm -r $MY_TEMPDIR
 exit 0
