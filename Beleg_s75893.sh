@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Beleg BS1 SoS 2021
+# s75893
+
 #****************
 # error handling
 #****************
@@ -36,8 +39,7 @@ download_files () {
 #****************
 # not correct amount of parameters
 if [[ $# -lt 2 ]]; then
-  echo -e "2 parameters are needed\nfirst parameter can be ipo51, ipc88, ilpro122, fohls or all\n
-          second parameter can be root, users, login\nPlease try again."
+  echo -e "2 parameters are needed\nfirst parameter can be ipo51, ipc88, ilpro122, fohls or all\nsecond parameter can be root, users, login\nPlease try again."
   exit 1
 fi
 
